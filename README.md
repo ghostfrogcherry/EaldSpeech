@@ -1,29 +1,164 @@
-# EaldSpeech — An Anglish Oversetter
+ ███████╗ █████╗ ██╗     ██████╗ ███████╗██████╗ ███████╗███████╗ ██████╗██╗  ██╗
+ ██╔════╝██╔══██╗██║     ██╔══██╗██╔════╝██╔══██╗██╔════╝██╔════╝██╔════╝██║  ██║
+ █████╗  ███████║██║     ██║  ██║███████╗██████╔╝█████╗  █████╗  ██║     ███████║
+ ██╔══╝  ██╔══██║██║     ██║  ██║╚════██║██╔═══╝ ██╔══╝  ██╔══╝  ██║     ██╔══██║
+ ███████╗██║  ██║███████╗██████╔╝███████║██║     ███████╗███████╗╚██████╗██║  ██║
+ ╚══════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚══════╝╚═╝     ╚══════╝╚══════╝ ╚═════╝╚═╝  ╚═╝
 
-A terminal UI that translates English into **Anglish** (English stripped of French and Latin influence, using only Germanic-root words). Written in Rust with ratatui.
+                    Speak the old tongue once more.
 
-## Quick Start
+> A terminal-driven Anglish translator forged for folk who think English had enough French thrust upon it already.
+
+---
+
+# EaldSpeech
+
+`EaldSpeech` is a TUI Anglish translator that shifts modern English toward a more Germanic, plainspoken tongue.
+
+Built for:
+- terminal wanderers
+- Linux gremlins
+- language nerds
+- history enjoyers
+- people who see "utilize" and take psychic damage
+
+---
+
+## Features
+
+- ⚔️ Real-time Anglish translation
+- 🖥️ Clean terminal interface
+- 📜 Word-root replacement system
+- 🌲 Optional archaic flavoring
+- 🔥 Pipe stdin directly into the translator
+- 🧙 Multiple translation depths
+- 🐧 Linux-first workflow
+
+---
+
+## Example
+
+### Input
 
 ```bash
-cargo run --release
+ealdspeech "Please commence utilization of the beverage container."
 ```
 
-Or grab the binary from the releases page.
+### Output
+
+```text
+Please start use of the drink holder.
+```
+
+### Deep Mode
+
+```bash
+ealdspeech --deep
+```
+
+```text
+Pray begin use of the drink cask.
+```
+
+---
+
+## Installation
+
+### Cargo
+
+```bash
+cargo install ealdspeech
+```
+
+### Build from source
+
+```bash
+git clone https://github.com/ghostfrogcherry/EaldSpeech
+cd EaldSpeech
+cargo build --release
+```
+
+---
 
 ## Usage
 
-| Key | Action |
-|---|---|
-| `Ctrl+Q` / `Esc` | Quit |
-| `Tab` | Cycle theme |
-| `Ctrl+R` | Toggle direction (English↔Anglish) |
-| `Ctrl+A` | About page |
-| `Ctrl+C` | Copy output to clipboard |
-| `Ctrl+L` | Clear input |
-| `Ctrl+V` | Paste (bracketed paste supported) |
+### Interactive TUI
 
-Type in the top panel — translation appears live below.
+```bash
+ealdspeech
+```
 
-## Themes
+### Pipe text
 
-Six dark palettes: Catppuccin, Nord, Dracula, Tokyo Night, One Dark, Gruvbox.
+```bash
+echo "Commence the operation immediately." | ealdspeech
+```
+
+### Translate a file
+
+```bash
+ealdspeech speech.txt
+```
+
+### Wyrd Mode™
+
+```bash
+ealdspeech --wyrd
+```
+
+May become unreadable.
+This is expected.
+
+---
+
+## Philosophy
+
+English was forever changed in 1066.
+
+`EaldSpeech` asks:
+
+> "What if we made it weirder again?"
+
+This is not a scholarly reconstruction tool.
+
+It is:
+- part language project
+- part terminal toy
+- part cultural necromancy
+
+---
+
+## Planned Features
+
+- [ ] Full ratatui interface
+- [ ] Configurable translation profiles
+- [ ] Etymology inspection
+- [ ] Vim keybinds
+- [ ] Offline wordhoard
+- [ ] WASM/web build
+- [ ] Live translation mode
+- [ ] Beowulf mode (unsafe)
+
+---
+
+## Screenshot
+
+```text
+┌─ EaldSpeech ───────────────────────────────┐
+│                                            │
+│  commence  → start                         │
+│  utilize   → use                           │
+│  beverage  → drink                         │
+│                                            │
+│  > _                                       │
+│                                            │
+└────────────────────────────────────────────┘
+```
+
+---
+
+## License
+
+MIT
+
+Unlike England after Hastings.
