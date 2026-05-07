@@ -130,13 +130,14 @@ It is:
 
 ## Planned Features
 
-- [ ] Full ratatui interface
+- [x] Full ratatui interface
+- [x] CLI argument, file, and pipe input
+- [x] Deep and wyrd translation modes
 - [ ] Configurable translation profiles
 - [ ] Etymology inspection
 - [ ] Vim keybinds
 - [ ] Offline wordhoard
 - [ ] WASM/web build
-- [ ] Live translation mode
 - [ ] Beowulf mode (unsafe)
 
 ---

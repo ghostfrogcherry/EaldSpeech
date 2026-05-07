@@ -1,5 +1,6 @@
 mod translate;
 
+use clap::Parser;
 use crossterm::{
     event::{
         self, DisableBracketedPaste, DisableMouseCapture, EnableBracketedPaste,
@@ -16,9 +17,32 @@ use ratatui::{
     widgets::{Block, BorderType, Borders, Clear, Paragraph, Wrap},
     Frame, Terminal,
 };
-use std::{error::Error, io, time::Duration};
+use std::{
+    error::Error,
+    fs,
+    io::{self, IsTerminal, Read},
+    time::Duration,
+};
 
 use translate::Anglish;
+
+#[derive(Parser)]
+#[command(name = "ealdspeech", version, about = "Speak the old tongue once more")]
+struct Cli {
+    text: Option<String>,
+
+    #[arg(short, long)]
+    file: Option<String>,
+
+    #[arg(short, long)]
+    deep: bool,
+
+    #[arg(short, long)]
+    wyrd: bool,
+
+    #[arg(short, long)]
+    reverse: bool,
+}
 
 #[derive(Clone, Copy)]
 struct Theme {
@@ -207,6 +231,53 @@ impl App {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    let cli = Cli::parse();
+
+    let has_cli = cli.text.is_some() || cli.file.is_some();
+    let piped = !has_cli && !io::stdin().is_terminal();
+
+    if has_cli || piped {
+        run_cli(&cli)
+    } else {
+        run_tui()
+    }
+}
+
+fn run_cli(cli: &Cli) -> Result<(), Box<dyn Error>> {
+    let anglish = Anglish::new();
+
+    let input: String = if let Some(ref path) = cli.file {
+        fs::read_to_string(path)?
+    } else if let Some(ref text) = cli.text {
+        text.clone()
+    } else if !io::stdin().is_terminal() {
+        let mut buf = String::new();
+        io::stdin().lock().read_to_string(&mut buf)?;
+        buf
+    } else {
+        String::new()
+    };
+
+    if input.is_empty() {
+        eprintln!("No input provided");
+        std::process::exit(1);
+    }
+
+    let output = if cli.wyrd {
+        anglish.translate_wyrd(&input)
+    } else if cli.deep {
+        anglish.translate_deep(&input)
+    } else if cli.reverse {
+        anglish.translate_reverse(&input)
+    } else {
+        anglish.translate(&input)
+    };
+
+    print!("{}", output);
+    Ok(())
+}
+
+fn run_tui() -> Result<(), Box<dyn Error>> {
     enable_raw_mode()?;
     let mut stderr = io::stderr();
     execute!(
@@ -303,9 +374,16 @@ fn about_page(f: &mut Frame, app: &mut App) {
         Line::from("  Ctrl+C          Copy output"),
         Line::from("  Ctrl+L          Clear input"),
         Line::from(""),
+        Line::from(Span::styled(" CLI Usage ", Style::default().fg(theme.title).add_modifier(Modifier::BOLD))),
+        Line::from("  ealdspeech \"text\"       translate text"),
+        Line::from("  ealdspeech -f file.txt  translate file"),
+        Line::from("  echo \"text\" | ealdspeech  pipe input"),
+        Line::from("  ealdspeech --deep       deep mode"),
+        Line::from("  ealdspeech --wyrd       wyrd mode"),
+        Line::from("  ealdspeech --reverse    reverse direction"),
+        Line::from(""),
         Line::from(Span::styled(" Credits ", Style::default().fg(theme.title).add_modifier(Modifier::BOLD))),
-        Line::from("  Rust + ratatui + crossterm"),
-        Line::from("  arboard for clipboard"),
+        Line::from("  Rust + ratatui + crossterm | arboard"),
         Line::from("  Anglish is a hobbyist conlang."),
         Line::from(""),
         Line::from(Span::styled("  Ctrl+A or Esc to close ", Style::default().fg(Color::DarkGray))),
@@ -348,14 +426,12 @@ fn ui(f: &mut Frame, app: &mut App) {
         )
         .split(size);
 
-    // title
     let title = Line::from(Span::styled(
         "  EALDSP\u{0112}C   \u{00d6}VERSETTEND  ",
         Style::default().fg(theme.title).add_modifier(Modifier::BOLD),
     ));
     f.render_widget(title, chunks[0]);
 
-    // input panel
     let input_title = if app.mode == Mode::Fwd {
         " English "
     } else {
@@ -372,7 +448,6 @@ fn ui(f: &mut Frame, app: &mut App) {
         .wrap(Wrap { trim: false });
     f.render_widget(input_paragraph, chunks[1]);
 
-    // cursor
     let cursor_pos = if app.input.is_empty() {
         0
     } else {
@@ -382,7 +457,6 @@ fn ui(f: &mut Frame, app: &mut App) {
     let y = chunks[1].y + 1 + app.input.matches('\n').count() as u16;
     f.set_cursor_position((x, y.min(chunks[1].y + chunks[1].height - 2)));
 
-    // arrow
     let arrow = Line::from(Span::styled(
         "    \u{25B6}    ",
         Style::default()
@@ -391,7 +465,6 @@ fn ui(f: &mut Frame, app: &mut App) {
     ));
     f.render_widget(arrow, chunks[2]);
 
-    // output panel
     let output_title = if app.mode == Mode::Fwd {
         " Ealdsp\u{0113}c "
     } else {
@@ -408,7 +481,6 @@ fn ui(f: &mut Frame, app: &mut App) {
         .wrap(Wrap { trim: false });
     f.render_widget(output_paragraph, chunks[3]);
 
-    // flash message
     if let Some(ref flash) = app.flash {
         if app.frame < flash.expires {
             let flash_line = Line::from(Span::styled(
@@ -428,7 +500,6 @@ fn ui(f: &mut Frame, app: &mut App) {
         }
     }
 
-    // stats bar
     let stats = app.stats();
     let stats_line = Line::from(Span::styled(
         stats,
@@ -436,7 +507,6 @@ fn ui(f: &mut Frame, app: &mut App) {
     ));
     f.render_widget(stats_line, chunks[4]);
 
-    // help bar
     let help = Line::from(Span::styled(
         " Ctrl+Q/Esc:quit  Tab:theme  Ctrl+R:reverse  Ctrl+A:about  Ctrl+C:copy  Ctrl+L:clear ",
         Style::default().fg(Color::DarkGray),

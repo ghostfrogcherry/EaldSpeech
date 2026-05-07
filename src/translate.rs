@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 pub struct Anglish {
     words: HashMap<&'static str, &'static str>,
+    deep: HashMap<&'static str, &'static str>,
     reverse: HashMap<&'static str, &'static str>,
     suffixes: Vec<(&'static str, &'static str)>,
     prefixes: Vec<(&'static str, &'static str)>,
@@ -10,11 +11,14 @@ pub struct Anglish {
 impl Anglish {
     pub fn new() -> Self {
         let words = Self::build_dict();
+        let deep = Self::build_deep();
         let mut reverse = HashMap::new();
         for (&english, &anglish) in &words {
             reverse.entry(anglish).or_insert(english);
         }
         let suffixes = vec![
+            ("ation", "ing"),
+            ("ition", "ing"),
             ("tion", "ing"),
             ("sion", "ing"),
             ("ment", "ing"),
@@ -59,7 +63,7 @@ impl Anglish {
             ("tri", "three"),
         ];
 
-        Self { words, reverse, suffixes, prefixes }
+        Self { words, deep, reverse, suffixes, prefixes }
     }
 
     fn build_dict() -> HashMap<&'static str, &'static str> {
@@ -185,6 +189,7 @@ impl Anglish {
         d.insert("basis", "groundwork");
         d.insert("battle", "fight");
         d.insert("beauty", "fairness");
+        d.insert("beverage", "drink");
         d.insert("begin", "start");
         d.insert("behavior", "bearing");
         d.insert("believe", "trow");
@@ -320,6 +325,10 @@ impl Anglish {
         d.insert("consumption", "use");
         d.insert("contact", "touch");
         d.insert("contain", "hold");
+        d.insert("commence", "start");
+        d.insert("commenced", "started");
+        d.insert("commences", "starts");
+        d.insert("commencing", "starting");
         d.insert("container", "holder");
         d.insert("contemporary", "modern");
         d.insert("content", "happy");
@@ -1741,7 +1750,10 @@ impl Anglish {
         d.insert("urgent", "pressing");
         d.insert("usage", "use");
         d.insert("utility", "usefulness");
+        d.insert("utilization", "use");
         d.insert("utilize", "make use of");
+        d.insert("utilized", "used");
+        d.insert("utilizing", "using");
         d.insert("utmost", "uttermost");
         d.insert("vacation", "holiday");
         d.insert("valid", "sound");
@@ -1810,12 +1822,258 @@ impl Anglish {
         d
     }
 
+    fn build_deep() -> HashMap<&'static str, &'static str> {
+        let mut d = HashMap::new();
+        d.insert("please", "pray");
+        d.insert("commence", "fall to");
+        d.insert("start", "fall to");
+        d.insert("begin", "fall to");
+        d.insert("use", "wield");
+        d.insert("container", "cask");
+        d.insert("bottle", "flask");
+        d.insert("drink", "mead");
+        d.insert("beverage", "mead");
+        d.insert("operation", "undertaking");
+        d.insert("information", "lore");
+        d.insert("school", "learnstead");
+        d.insert("restaurant", "tavern");
+        d.insert("inn", "tavern");
+        d.insert("police", "warden");
+        d.insert("hospital", "leechhouse");
+        d.insert("president", "headman");
+        d.insert("animal", "wight");
+        d.insert("decide", "ordain");
+        d.insert("explain", "unfold");
+        d.insert("difficult", "stiff");
+        d.insert("end", "outgang");
+        d.insert("example", "bysen");
+        d.insert("university", "leorningshouse");
+        d.insert("music", "gleecraft");
+        d.insert("dictionary", "wordhoard");
+        d.insert("language", "speech");
+        d.insert("translator", "oversetter");
+        d.insert("important", "foremost");
+        d.insert("immediately", "forthwith");
+        d.insert("very", "sorely");
+        d.insert("sorely", "sorely");
+        d.insert("beautiful", "winsome");
+        d.insert("happy", "blithe");
+        d.insert("sad", "dreary");
+        d.insert("brave", "doughty");
+        d.insert("friend", "leofman");
+        d.insert("enemy", "nithing");
+        d.insert("world", "middangeard");
+        d.insert("computer", "think-engine");
+        d.insert("program", "spell");
+        d.insert("data", "writ");
+        d.insert("internet", "weft");
+        d.insert("website", "weftstead");
+        d.insert("email", "speedwrite");
+        d.insert("password", "lockword");
+        d.insert("file", "scroll");
+        d.insert("window", "eyethirl");
+        d.insert("screen", "skineboard");
+        d.insert("keyboard", "keyhoard");
+        d.insert("mouse", "mus");
+        d.insert("download", "downbring");
+        d.insert("upload", "upbring");
+        d.insert("digital", "fingerish");
+        d.insert("network", "net");
+        d.insert("server", "thane");
+        d.insert("client", "leod");
+        d.insert("city", "burg");
+        d.insert("river", "ea");
+        d.insert("mountain", "beorg");
+        d.insert("forest", "weald");
+        d.insert("government", "weald");
+        d.insert("parliament", "witan");
+        d.insert("army", "here");
+        d.insert("navy", "sciphere");
+        d.insert("captain", "hlaford");
+        d.insert("doctor", "leech");
+        d.insert("teacher", "lareow");
+        d.insert("student", "leornere");
+        d.insert("book", "bec");
+        d.insert("story", "spell");
+        d.insert("poetry", "leothcraft");
+        d.insert("art", "craeft");
+        d.insert("science", "wisdomcraeft");
+        d.insert("history", "gewrit");
+        d.insert("law", "ae");
+        d.insert("freedom", "freodom");
+        d.insert("nature", "gecynd");
+        d.insert("weather", "weder");
+        d.insert("summer", "sumor");
+        d.insert("winter", "winter");
+        d.insert("spring", "lencten");
+        d.insert("autumn", "haerfest");
+        d.insert("morning", "morgen");
+        d.insert("evening", "aefen");
+        d.insert("night", "niht");
+        d.insert("day", "daeg");
+        d.insert("year", "gear");
+        d.insert("life", "lif");
+        d.insert("death", "deaeth");
+        d.insert("time", "tima");
+        d.insert("sea", "sae");
+        d.insert("ocean", "garsecg");
+        d.insert("sun", "sunne");
+        d.insert("moon", "mona");
+        d.insert("star", "steorra");
+        d.insert("earth", "eorðe");
+        d.insert("fire", "fyr");
+        d.insert("water", "waeter");
+        d.insert("stone", "stan");
+        d.insert("house", "hus");
+        d.insert("home", "ham");
+        d.insert("king", "cyning");
+        d.insert("queen", "cwen");
+        d.insert("lord", "hlaford");
+        d.insert("lady", "hlaefdige");
+        d.insert("man", "waepman");
+        d.insert("woman", "wifman");
+        d.insert("child", "cild");
+        d.insert("father", "fæder");
+        d.insert("mother", "modor");
+        d.insert("brother", "broþor");
+        d.insert("sister", "sweostor");
+        d.insert("son", "sunu");
+        d.insert("daughter", "dohtor");
+        d.insert("god", "god");
+        d.insert("angel", "engel");
+        d.insert("devil", "deofol");
+        d.insert("heaven", "heofon");
+        d.insert("hell", "hel");
+        d.insert("soul", "sawol");
+        d.insert("body", "lichama");
+        d.insert("head", "heafod");
+        d.insert("hand", "hond");
+        d.insert("foot", "fot");
+        d.insert("eye", "eage");
+        d.insert("ear", "eare");
+        d.insert("mouth", "muð");
+        d.insert("tongue", "tunge");
+        d.insert("tooth", "toð");
+        d.insert("heart", "heorte");
+        d.insert("blood", "blod");
+        d.insert("bone", "ban");
+        d.insert("bread", "hlaf");
+        d.insert("milk", "meolc");
+        d.insert("meat", "flaesc");
+        d.insert("fish", "fisc");
+        d.insert("salt", "sealt");
+        d.insert("gold", "gold");
+        d.insert("silver", "seolfor");
+        d.insert("iron", "iren");
+        d.insert("wood", "wudu");
+        d.insert("door", "duru");
+        d.insert("bed", "bedd");
+        d.insert("table", "bord");
+        d.insert("chair", "stol");
+        d.insert("name", "nama");
+        d.insert("word", "word");
+        d.insert("song", "sang");
+        d.insert("sleep", "slaep");
+        d
+    }
+
     pub fn translate(&self, input: &str) -> String {
         self.translate_inner(input, &self.words, &self.suffixes, &self.prefixes)
     }
 
     pub fn translate_reverse(&self, input: &str) -> String {
         self.translate_inner(input, &self.reverse, &[], &[])
+    }
+
+    pub fn translate_deep(&self, input: &str) -> String {
+        let mut merged = self.words.clone();
+        for (&k, &v) in &self.deep {
+            merged.insert(k, v);
+        }
+        self.translate_inner(input, &merged, &self.suffixes, &self.prefixes)
+    }
+
+    pub fn translate_wyrd(&self, input: &str) -> String {
+        let base = self.translate_deep(input);
+        let mut out = String::new();
+        let mut word = String::new();
+        let mut the_count = 0u64;
+        for ch in base.chars() {
+            if ch.is_alphanumeric() || ch == '\'' {
+                word.push(ch);
+            } else {
+                if !word.is_empty() {
+                    let lower = word.to_ascii_lowercase();
+                    let replacement: Option<&str> = match lower.as_str() {
+                        "the" => {
+                            the_count += 1;
+                            if the_count % 2 == 0 {
+                                Some("ye")
+                            } else {
+                                None
+                            }
+                        }
+                        "and" => Some("and eke"),
+                        "very" => Some("full"),
+                        "you" => Some("thou"),
+                        "your" => Some("thy"),
+                        "yours" => Some("thine"),
+                        "are" => Some("art"),
+                        "is" => Some("is"),
+                        "have" => Some("hath"),
+                        "has" => Some("hath"),
+                        "shall" => Some("shalt"),
+                        "will" => Some("wilt"),
+                        "can" => Some("canst"),
+                        "to" => Some("to"),
+                        "not" => Some("naught"),
+                        "with" => Some("mid"),
+                        "through" => Some("thurh"),
+                        "when" => Some("when"),
+                        "where" => Some("whither"),
+                        "here" => Some("hither"),
+                        "there" => Some("thither"),
+                        "this" => Some("this"),
+                        "that" => Some("that"),
+                        "these" => Some("thees"),
+                        "those" => Some("thoes"),
+                        "yes" => Some("yea"),
+                        "no" => Some("nay"),
+                        "please" => Some("prithee"),
+                        "sorry" => Some("alas"),
+                        "hello" => Some("hail"),
+                        "goodbye" => Some("farewell"),
+                        "thanks" => Some("gramercy"),
+                        "thank" => Some("thank"),
+                        "friend" => Some("leof"),
+                        _ => None,
+                    };
+                    match replacement {
+                        Some(r) => {
+                            out.push_str(&Self::preserve_case(&word, r));
+                        }
+                        None => {
+                            out.push_str(&word);
+                        }
+                    }
+                    word.clear();
+                }
+                out.push(ch);
+            }
+        }
+        if !word.is_empty() {
+            out.push_str(&word);
+        }
+        // occasionally prepend "Forsooth" at the start
+        if out.len() > 10 {
+            if let Some(first) = out.chars().next().map(|c| c.is_uppercase()) {
+                if first && !out.starts_with("Forsooth") && !out.starts_with("forsooth") {
+                    let rest = out.trim_start().to_string();
+                    out = format!("Forsooth, {}", rest);
+                }
+            }
+        }
+        out
     }
 
     fn translate_inner(
